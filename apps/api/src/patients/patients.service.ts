@@ -1,40 +1,44 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import type { Patient } from '@repo/api';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Patient } from './entities/patient.entity';
 import { CreatePatientDto } from './dto/create-patient.dto';
 import { UpdatePatientDto } from './dto/update-patient.dto';
 import { PatientResponseDto } from './dto/patient-response.dto';
 
 @Injectable()
 export class PatientsService {
-  // In-memory storage for patients (replace with database later)
-  private patients: Map<string, Patient> = new Map();
+  constructor(
+    @InjectRepository(Patient)
+    private patientRepository: Repository<Patient>,
+  ) {}
 
   async create(
     createPatientDto: CreatePatientDto,
   ): Promise<PatientResponseDto> {
-    const patient: Patient = {
-      uuid: uuidv4(),
+    const patient = this.patientRepository.create({
       firstName: createPatientDto.firstName,
       lastName: createPatientDto.lastName,
       dateOfBirth: new Date(createPatientDto.dateOfBirth),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
 
-    this.patients.set(patient.uuid, patient);
-
-    return this.toResponseDto(patient);
+    const savedPatient = await this.patientRepository.save(patient);
+    return this.toResponseDto(savedPatient);
   }
 
   async findAll(): Promise<PatientResponseDto[]> {
-    return Array.from(this.patients.values()).map((patient) =>
-      this.toResponseDto(patient),
-    );
+    const patients = await this.patientRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+    return patients.map((patient) => this.toResponseDto(patient));
   }
 
   async findOne(uuid: string): Promise<PatientResponseDto> {
-    const patient = this.patients.get(uuid);
+    const patient = await this.patientRepository.findOne({
+      where: { uuid },
+    });
 
     if (!patient) {
       throw new NotFoundException(`Patient with UUID ${uuid} not found`);
@@ -47,13 +51,15 @@ export class PatientsService {
     uuid: string,
     updatePatientDto: UpdatePatientDto,
   ): Promise<PatientResponseDto> {
-    const patient = this.patients.get(uuid);
+    const patient = await this.patientRepository.findOne({
+      where: { uuid },
+    });
 
     if (!patient) {
       throw new NotFoundException(`Patient with UUID ${uuid} not found`);
     }
 
-    // Update patient fields if provided
+    // Update only provided fields
     if (updatePatientDto.firstName !== undefined) {
       patient.firstName = updatePatientDto.firstName;
     }
@@ -64,31 +70,45 @@ export class PatientsService {
       patient.dateOfBirth = new Date(updatePatientDto.dateOfBirth);
     }
 
-    patient.updatedAt = new Date();
-
-    this.patients.set(uuid, patient);
-
-    return this.toResponseDto(patient);
+    const updatedPatient = await this.patientRepository.save(patient);
+    return this.toResponseDto(updatedPatient);
   }
 
   async remove(uuid: string): Promise<void> {
-    const patient = this.patients.get(uuid);
+    const result = await this.patientRepository.delete(uuid);
 
-    if (!patient) {
+    if (result.affected === 0) {
       throw new NotFoundException(`Patient with UUID ${uuid} not found`);
     }
-
-    this.patients.delete(uuid);
   }
 
   private toResponseDto(patient: Patient): PatientResponseDto {
+    // Handle both Date objects and strings from database
+    const formatDate = (date: Date | string): string => {
+      if (date instanceof Date) {
+        return date.toISOString();
+      }
+      return new Date(date).toISOString();
+    };
+
+    const formatDateOnly = (date: Date | string): string => {
+      if (date instanceof Date) {
+        return date.toISOString().split('T')[0];
+      }
+      // If it's already a date string (YYYY-MM-DD), return as is
+      if (typeof date === 'string' && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        return date;
+      }
+      return new Date(date).toISOString().split('T')[0];
+    };
+
     return {
       uuid: patient.uuid,
       firstName: patient.firstName,
       lastName: patient.lastName,
-      dateOfBirth: patient.dateOfBirth.toISOString().split('T')[0], // Format as YYYY-MM-DD
-      createdAt: patient.createdAt.toISOString(),
-      updatedAt: patient.updatedAt.toISOString(),
+      dateOfBirth: formatDateOnly(patient.dateOfBirth),
+      createdAt: formatDate(patient.createdAt),
+      updatedAt: formatDate(patient.updatedAt),
     };
   }
 }
