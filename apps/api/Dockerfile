@@ -6,11 +6,8 @@ WORKDIR /app
 
 COPY . .
 RUN pnpm install
-
 RUN pnpm run build --filter=api
-
-WORKDIR /app/apps/api
 
 EXPOSE 3000
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["pnpm", "start:prod"]
+CMD ["node", "apps/api/dist/main"]
