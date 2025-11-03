@@ -8,8 +8,7 @@ FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/*/package.json ./packages/*/
-RUN pnpm install --frozen-lockfile
-
+RUN pnpm install
 # Build
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
