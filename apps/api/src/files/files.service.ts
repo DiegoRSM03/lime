@@ -1,6 +1,5 @@
 import {
   Injectable,
-  BadRequestException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
@@ -12,6 +11,7 @@ import { Note, NoteType } from './entities/note.entity';
 import { UploadAudioDto } from './dto/upload-audio.dto';
 import { UploadTextDto } from './dto/upload-text.dto';
 import { NoteResponseDto } from './dto/note-response.dto';
+import { PatientsService } from '../patients/patients.service';
 
 @Injectable()
 export class FilesService {
@@ -22,16 +22,26 @@ export class FilesService {
     @InjectRepository(Note)
     private noteRepository: Repository<Note>,
     private configService: ConfigService,
+    private patientsService: PatientsService,
   ) {
     // Initialize S3 client
     this.s3Client = new S3Client({
-      region: this.configService.get('AWS_REGION', 'us-east-1'),
+      region: this.configService.get('AWS_REGION', process.env.AWS_REGION),
       credentials: {
-        accessKeyId: this.configService.get('AWS_ACCESS_KEY_ID', ''),
-        secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY', ''),
+        accessKeyId: this.configService.get(
+          'AWS_ACCESS_KEY_ID',
+          process.env.AWS_ACCESS_KEY,
+        ),
+        secretAccessKey: this.configService.get(
+          'AWS_SECRET_ACCESS_KEY',
+          process.env.AWS_SECRET_ACCESS_KEY,
+        ),
       },
     });
-    this.bucketName = this.configService.get('AWS_S3_BUCKET_NAME', '');
+    this.bucketName = this.configService.get(
+      'AWS_S3_BUCKET_NAME',
+      process.env.AWS_S3_BUCKET_NAME,
+    );
   }
 
   async uploadAudio(
@@ -39,8 +49,15 @@ export class FilesService {
     uploadAudioDto: UploadAudioDto,
   ): Promise<NoteResponseDto> {
     try {
-      // Verify patient exists (you might want to inject PatientsService for this)
-      // For now, we'll assume the patient exists
+      // Verify patient exists
+      try {
+        await this.patientsService.findOne(uploadAudioDto.patientUuid);
+      } catch (error) {
+        if (error instanceof NotFoundException) {
+          throw new NotFoundException('Patient not found');
+        }
+        throw error;
+      }
 
       // Generate S3 key
       const timestamp = Date.now();
@@ -62,7 +79,7 @@ export class FilesService {
       await this.s3Client.send(new PutObjectCommand(uploadParams));
 
       // Construct S3 URL
-      const s3Url = `https://${this.bucketName}.s3.${this.configService.get('AWS_REGION', 'us-east-1')}.amazonaws.com/${s3Key}`;
+      const s3Url = `https://${this.bucketName}.s3.${this.configService.get('AWS_REGION', process.env.AWS_REGION)}.amazonaws.com/${s3Key}`;
 
       // Save to database
       const note = this.noteRepository.create({
@@ -70,6 +87,7 @@ export class FilesService {
         type: NoteType.AUDIO,
         s3Url,
         rawNotes: null,
+
         dateOfRecording: new Date(uploadAudioDto.dateOfFile),
       });
 
@@ -87,12 +105,23 @@ export class FilesService {
   }
 
   async uploadText(uploadTextDto: UploadTextDto): Promise<NoteResponseDto> {
+    // Verify patient exists
+    try {
+      await this.patientsService.findOne(uploadTextDto.patientUuid);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException('Patient not found');
+      }
+      throw error;
+    }
+
     // Save to database
     const note = this.noteRepository.create({
       patientUuid: uploadTextDto.patientUuid,
       type: NoteType.TEXT,
       s3Url: null,
       rawNotes: uploadTextDto.notes,
+
       dateOfRecording: new Date(uploadTextDto.dateOfFile),
     });
 

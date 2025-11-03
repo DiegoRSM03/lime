@@ -5,6 +5,10 @@
     "SWAGGER_PROD_API_URL",
     "API_PORT",
     "NODE_ENV",
+    "AWS_REGION",
+    "AWS_ACCESS_KEY",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_S3_BUCKET_NAME",
     "FRONTEND_URL"
   ],
   "tasks": {
