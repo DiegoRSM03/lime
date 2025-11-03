@@ -1,0 +1,7 @@
+echo "🔍 Running linting checks..."
+pnpm run lint -- --fix
+
+echo "✨ Checking formatting..."
+pnpm run format
+
+git add -A
