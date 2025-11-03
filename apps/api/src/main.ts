@@ -23,13 +23,13 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('app', 'Core application endpoints')
     .addServer('http://localhost:3000', 'Development server')
-    .addServer(process.env.API_URL, 'Production server')
+    .addServer(process.env.SWAGGER_PROD_API_URL, 'Production server')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3000);
+  await app.listen(process.env.API_PORT ?? 3000);
 }
 
 void bootstrap();
