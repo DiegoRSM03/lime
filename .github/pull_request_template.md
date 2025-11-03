@@ -1,8 +1,3 @@
----
-name: '[Place] Default Pull Request Template'
-title: '[Place] Default Pull Request Template'
----
-
 ## Changes
 
 ### Frontend
