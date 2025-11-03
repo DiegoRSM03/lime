@@ -17,8 +17,13 @@ async function bootstrap() {
   // Swagger configuration
   const config = new DocumentBuilder()
     .setTitle('Lime API')
-    .setDescription('The Lime API documentation')
+    .setDescription(
+      'The Lime API documentation - A modern REST API built with NestJS',
+    )
     .setVersion('1.0')
+    .addTag('app', 'Core application endpoints')
+    .addServer('http://localhost:3000', 'Development server')
+    .addServer(process.env.API_URL, 'Production server')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

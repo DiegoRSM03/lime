@@ -1,7 +1,8 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "globalDependencies": ["**/.env.*local"],
-  "globalEnv": ["FRONTEND_URL"],
+  "globalEnv": [ "API_URL",
+  "FRONTEND_URL"],
   "tasks": {
     "dev": {
       "cache": false,
