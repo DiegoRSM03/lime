@@ -7,8 +7,15 @@ WORKDIR /app
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/api/package.json ./apps/api/
-COPY packages/*/package.json ./packages/*/
+
+# Copy each package directory's package.json explicitly
+COPY packages/api/package.json ./packages/api/
+COPY packages/eslint-config/package.json ./packages/eslint-config/
+COPY packages/jest-config/package.json ./packages/jest-config/
+COPY packages/typescript-config/package.json ./packages/typescript-config/
+COPY packages/ui/package.json ./packages/ui/
 RUN pnpm install
+
 # Build
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
