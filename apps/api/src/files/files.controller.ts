@@ -71,7 +71,7 @@ export class FilesController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 50 * 1024 * 1024 }), // 50MB
-          new FileTypeValidator({ fileType: /(mp3|wav|m4a|webm)$/ }),
+          new FileTypeValidator({ fileType: /(mp3|wav|m4a|webm|mpeg)$/ }),
         ],
       }),
     )
