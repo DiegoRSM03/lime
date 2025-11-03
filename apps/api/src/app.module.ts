@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
+import { PatientsModule } from './patients/patients.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { AppController } from './app.controller';
       isGlobal: true,
       envFilePath: ['../../.env.local', '../../.env'],
     }),
+    PatientsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
