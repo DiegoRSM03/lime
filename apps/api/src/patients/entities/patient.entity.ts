@@ -4,7 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Note } from '../../files/entities/note.entity';
 
 @Entity('patients')
 export class Patient {
@@ -32,4 +34,7 @@ export class Patient {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(() => Note, (note) => note.patient)
+  notes: Note[];
 }
