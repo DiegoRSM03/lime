@@ -9,6 +9,15 @@ dotenv.config({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   allowedDevOrigins: ['http://localhost:3000'],
+  redirects: async () => {
+    return [
+      {
+        source: '/',
+        destination: '/notes',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
