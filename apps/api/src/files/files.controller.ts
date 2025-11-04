@@ -33,7 +33,7 @@ export class FilesController {
   @ApiOperation({
     summary: 'Upload audio recording',
     description:
-      'Uploads an audio file to S3 and stores metadata in the database',
+      'Uploads an audio file to S3, transcribes it, generates a SOAP summary, and stores metadata in the database',
   })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -88,7 +88,8 @@ export class FilesController {
   @Post('text')
   @ApiOperation({
     summary: 'Upload text notes',
-    description: 'Saves text notes for a patient in the database',
+    description:
+      'Saves text notes for a patient, generates a SOAP summary, and stores in the database',
   })
   @ApiCreatedResponse({
     description: 'Text notes saved successfully',

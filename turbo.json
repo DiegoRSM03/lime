@@ -2,6 +2,12 @@
   "$schema": "https://turborepo.com/schema.json",
   "globalDependencies": ["**/.env.*local"],
   "globalEnv": [
+    "DB_PASSWORD",
+    "DB_HOST",
+    "DB_PORT",
+    "DB_USERNAME",
+    "DB_NAME",
+    "OPENAI_API_KEY",
     "SWAGGER_PROD_API_URL",
     "API_PORT",
     "NODE_ENV",

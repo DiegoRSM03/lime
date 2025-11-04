@@ -38,6 +38,14 @@ export class Note {
   @Column({ type: 'text', nullable: true })
   transcription: string | null;
 
+  @Column({ type: 'jsonb', nullable: true })
+  summary: {
+    subjective: string;
+    objective: string;
+    assessment: string;
+    plan: string;
+  } | null;
+
   @Column({
     type: 'date',
     name: 'date_of_recording',

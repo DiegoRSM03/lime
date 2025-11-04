@@ -46,6 +46,23 @@ export class NoteResponseDto implements INoteResponseDto {
   transcription: string | null;
 
   @ApiProperty({
+    description: 'SOAP format summary of the note',
+    example: {
+      subjective: 'Patient reports persistent headache for 3 days...',
+      objective: 'Vital Signs: BP 130/85, HR 78, Temp 98.6°F...',
+      assessment: 'Migraine headache, likely triggered by...',
+      plan: '1. Prescribed sumatriptan 50mg PO...',
+    },
+    nullable: true,
+  })
+  summary: {
+    subjective: string;
+    objective: string;
+    assessment: string;
+    plan: string;
+  } | null;
+
+  @ApiProperty({
     description: 'The date of the recording or notes',
     example: '2024-01-15',
     format: 'date',

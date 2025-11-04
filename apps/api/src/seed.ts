@@ -1,6 +1,52 @@
 import { DataSource } from 'typeorm';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Patient } from './patients/entities/patient.entity';
 import { Note } from './files/entities/note.entity';
+
+// Simple env loader function
+function loadEnvFile(filePath: string): void {
+  const envFile = fs.readFileSync(filePath, 'utf8');
+  const lines = envFile.split('\n');
+
+  lines.forEach((line) => {
+    const trimmedLine = line.trim();
+    if (trimmedLine && !trimmedLine.startsWith('#')) {
+      const [key, ...valueParts] = trimmedLine.split('=');
+      const value = valueParts
+        .join('=')
+        .trim()
+        .replace(/^["']|["']$/g, '');
+      if (!process.env[key]) {
+        process.env[key] = value;
+      }
+    }
+  });
+}
+
+// Load environment variables
+try {
+  loadEnvFile(path.resolve(__dirname, '../../../.env.local'));
+} catch {
+  // .env.local is optional
+}
+
+try {
+  loadEnvFile(path.resolve(__dirname, '../../../.env'));
+} catch {
+  // .env is optional if .env.local exists
+}
+
+// Validate required environment variables
+if (!process.env.DB_PASSWORD) {
+  console.error('❌ DB_PASSWORD environment variable is not set!');
+  console.error(
+    'Please ensure you have a .env or .env.local file with DB_PASSWORD defined.',
+  );
+  console.error('Example .env content:');
+  console.error('DB_PASSWORD=your_password_here');
+  process.exit(1);
+}
 
 // Create a standalone DataSource for seeding
 const dataSource = new DataSource({
@@ -69,4 +115,4 @@ async function seed() {
 }
 
 // Run the seed function
-seed();
+void seed();
