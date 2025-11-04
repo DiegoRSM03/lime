@@ -24,10 +24,19 @@ services:
       dockerfile: apps/api/Dockerfile
     restart: always
     ports:
-      - "3000:3000"
+      - "${API_PORT}:${API_PORT}"
     environment:
-      NODE_ENV: production
       DATABASE_URL: postgresql://lime_user:${DB_PASSWORD}@postgres:5432/lime_db
+      FRONTEND_URL: ${FRONTEND_URL}
+      SWAGGER_PROD_API_URL: ${SWAGGER_PROD_API_URL}
+      API_PORT: ${API_PORT}
+      NODE_ENV: ${NODE_ENV}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
     depends_on:
       postgres:
         condition: service_healthy
