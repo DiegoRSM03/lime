@@ -1,5 +1,5 @@
 // Actions
-import { getNoteByUuid } from '@/actions/notes';
+import { getNoteByUuid, getNotes } from '@/actions/notes';
 // Components
 import AudioPlayer from '@/components/audio-player/audio-player';
 
@@ -8,6 +8,11 @@ const DATE_FORMAT = {
   day: 'numeric',
   year: 'numeric',
 } as const;
+
+export const generateStaticParams = async () => {
+  const notes = await getNotes();
+  return notes.map((note) => ({ uuid: note.uuid }));
+};
 
 const NotePage = async ({ params }: { params: Promise<{ uuid: string }> }) => {
   const { uuid } = await params;
