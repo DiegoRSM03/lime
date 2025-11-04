@@ -7,6 +7,8 @@ import { AppController } from './app.controller';
 import { PatientsModule } from './patients/patients.module';
 import { FilesModule } from './files/files.module';
 import { TranscriptionModule } from './transcription/transcription.module';
+import { SummaryModule } from './summary/summary.module';
+import { NotesModule } from './notes/notes.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { TranscriptionModule } from './transcription/transcription.module';
     PatientsModule,
     FilesModule,
     TranscriptionModule,
+    SummaryModule,
+    NotesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -34,6 +34,7 @@ async function bootstrap() {
     .addTag('app', 'Core application endpoints')
     .addTag('patients', 'Patient management endpoints')
     .addTag('files', 'File upload endpoints for audio and text notes')
+    .addTag('notes', 'Notes retrieval endpoints')
     .addServer('http://localhost:3000', 'Development server')
     .addServer(process.env.SWAGGER_PROD_API_URL, 'Production server')
     .build();
