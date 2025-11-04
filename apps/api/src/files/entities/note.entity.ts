@@ -35,6 +35,9 @@ export class Note {
   @Column({ name: 'raw_notes', nullable: true, type: 'text' })
   rawNotes: string | null;
 
+  @Column({ type: 'text', nullable: true })
+  transcription: string | null;
+
   @Column({
     type: 'date',
     name: 'date_of_recording',

@@ -39,6 +39,13 @@ export class NoteResponseDto implements INoteResponseDto {
   rawNotes: string | null;
 
   @ApiProperty({
+    description: 'Transcription of audio file',
+    example: 'This is the transcribed text from the audio file.',
+    nullable: true,
+  })
+  transcription: string | null;
+
+  @ApiProperty({
     description: 'The date of the recording or notes',
     example: '2024-01-15',
     format: 'date',
