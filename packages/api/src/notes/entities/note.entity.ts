@@ -9,6 +9,7 @@ export interface Note {
   type: NoteType;
   s3Url: string | null;
   rawNotes: string | null;
+  transcription: string | null;
   dateOfRecording: Date;
   createdAt: Date;
   updatedAt: Date;

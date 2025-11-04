@@ -12,6 +12,7 @@ import { UploadAudioDto } from './dto/upload-audio.dto';
 import { UploadTextDto } from './dto/upload-text.dto';
 import { NoteResponseDto } from './dto/note-response.dto';
 import { PatientsService } from '../patients/patients.service';
+import { TranscriptionService } from '../transcription/transcription.service';
 
 @Injectable()
 export class FilesService {
@@ -23,8 +24,8 @@ export class FilesService {
     private noteRepository: Repository<Note>,
     private configService: ConfigService,
     private patientsService: PatientsService,
+    private transcriptionService: TranscriptionService,
   ) {
-    // Initialize S3 client
     this.s3Client = new S3Client({
       region: this.configService.get('AWS_REGION', process.env.AWS_REGION),
       credentials: {
@@ -49,7 +50,6 @@ export class FilesService {
     uploadAudioDto: UploadAudioDto,
   ): Promise<NoteResponseDto> {
     try {
-      // Verify patient exists
       try {
         await this.patientsService.findOne(uploadAudioDto.patientUuid);
       } catch (error) {
@@ -59,12 +59,10 @@ export class FilesService {
         throw error;
       }
 
-      // Generate S3 key
       const timestamp = Date.now();
       const fileExtension = file.originalname.split('.').pop();
       const s3Key = `audio/${uploadAudioDto.patientUuid}/${timestamp}.${fileExtension}`;
 
-      // Upload to S3
       const uploadParams = {
         Bucket: this.bucketName,
         Key: s3Key,
@@ -78,16 +76,25 @@ export class FilesService {
 
       await this.s3Client.send(new PutObjectCommand(uploadParams));
 
-      // Construct S3 URL
       const s3Url = `https://${this.bucketName}.s3.${this.configService.get('AWS_REGION', process.env.AWS_REGION)}.amazonaws.com/${s3Key}`;
 
-      // Save to database
+      let transcription: string | null = null;
+      try {
+        transcription = await this.transcriptionService.transcribeAudio(
+          file.buffer,
+          file.originalname,
+        );
+      } catch (error) {
+        console.error('Transcription failed:', error);
+        // Continue without transcription rather than failing the whole upload
+      }
+
       const note = this.noteRepository.create({
         patientUuid: uploadAudioDto.patientUuid,
         type: NoteType.AUDIO,
         s3Url,
         rawNotes: null,
-
+        transcription,
         dateOfRecording: new Date(uploadAudioDto.dateOfFile),
       });
 
@@ -105,7 +112,6 @@ export class FilesService {
   }
 
   async uploadText(uploadTextDto: UploadTextDto): Promise<NoteResponseDto> {
-    // Verify patient exists
     try {
       await this.patientsService.findOne(uploadTextDto.patientUuid);
     } catch (error) {
@@ -115,13 +121,11 @@ export class FilesService {
       throw error;
     }
 
-    // Save to database
     const note = this.noteRepository.create({
       patientUuid: uploadTextDto.patientUuid,
       type: NoteType.TEXT,
       s3Url: null,
       rawNotes: uploadTextDto.notes,
-
       dateOfRecording: new Date(uploadTextDto.dateOfFile),
     });
 
@@ -130,7 +134,6 @@ export class FilesService {
   }
 
   private toResponseDto(note: Note): NoteResponseDto {
-    // Handle both Date objects and strings from database
     const formatDate = (date: Date | string): string => {
       if (date instanceof Date) {
         return date.toISOString();
@@ -142,7 +145,6 @@ export class FilesService {
       if (date instanceof Date) {
         return date.toISOString().split('T')[0];
       }
-      // If it's already a date string (YYYY-MM-DD), return as is
       if (typeof date === 'string' && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
         return date;
       }
@@ -155,6 +157,7 @@ export class FilesService {
       type: note.type,
       s3Url: note.s3Url,
       rawNotes: note.rawNotes,
+      transcription: note.transcription,
       dateOfRecording: formatDateOnly(note.dateOfRecording),
       createdAt: formatDate(note.createdAt),
       updatedAt: formatDate(note.updatedAt),
