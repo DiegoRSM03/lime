@@ -1,17 +1,19 @@
+import { PatientResponseDto } from 'patients/dto/patient-response.dto';
+
 export interface NoteResponseDto {
   uuid: string;
-  patientUuid: string;
-  type: 'audio' | 'text';
+  patient: PatientResponseDto;
   s3Url: string | null;
   rawNotes: string | null;
-  transcription: string | null;
+  transcript: string | null;
   summary: {
     subjective: string;
     objective: string;
     assessment: string;
     plan: string;
   } | null;
-  dateOfRecording: string; // ISO string for API responses
+  recordingDate: string; // ISO string for API responses
+  recordingURL: string | null;
   createdAt: string; // ISO string for API responses
   updatedAt: string; // ISO string for API responses
 }
