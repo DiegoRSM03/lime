@@ -21,7 +21,7 @@ import {
 import { FilesService } from './files.service';
 import { UploadAudioDto } from './dto/upload-audio.dto';
 import { UploadTextDto } from './dto/upload-text.dto';
-import { NoteResponseDto } from './dto/note-response.dto';
+import { NoteResponseDto } from '../notes/dto/note-response.dto';
 
 @ApiTags('files')
 @Controller('files')

@@ -10,7 +10,7 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { Note, NoteType } from './entities/note.entity';
 import { UploadAudioDto } from './dto/upload-audio.dto';
 import { UploadTextDto } from './dto/upload-text.dto';
-import { NoteResponseDto } from './dto/note-response.dto';
+import { NoteResponseDto } from '../notes/dto/note-response.dto';
 import { PatientsService } from '../patients/patients.service';
 import { TranscriptionService } from '../transcription/transcription.service';
 import { SummaryService } from '../summary/summary.service';
@@ -114,7 +114,7 @@ export class FilesService {
       });
 
       const savedNote = await this.noteRepository.save(note);
-      return this.toResponseDto(savedNote);
+      return await this.toResponseDto(savedNote);
     } catch (error) {
       console.error('Error uploading audio:', error);
       if (error instanceof Error && error.name === 'NoSuchBucket') {
@@ -162,14 +162,7 @@ export class FilesService {
     return this.toResponseDto(savedNote);
   }
 
-  private toResponseDto(note: Note): NoteResponseDto {
-    const formatDate = (date: Date | string): string => {
-      if (date instanceof Date) {
-        return date.toISOString();
-      }
-      return new Date(date).toISOString();
-    };
-
+  private async toResponseDto(note: Note): Promise<NoteResponseDto> {
     const formatDateOnly = (date: Date | string): string => {
       if (date instanceof Date) {
         return date.toISOString().split('T')[0];
@@ -180,17 +173,24 @@ export class FilesService {
       return new Date(date).toISOString().split('T')[0];
     };
 
+    // Fetch the patient data
+    const patient = await this.patientsService.findOne(note.patientUuid);
+
     return {
       uuid: note.uuid,
-      patientUuid: note.patientUuid,
-      type: note.type,
-      s3Url: note.s3Url,
+      patient: {
+        uuid: patient.uuid,
+        firstName: patient.firstName,
+        lastName: patient.lastName,
+        dateOfBirth: patient.dateOfBirth,
+        createdAt: patient.createdAt,
+        updatedAt: patient.updatedAt,
+      },
       rawNotes: note.rawNotes,
-      transcription: note.transcription,
+      recordingURL: note.type === NoteType.AUDIO ? note.s3Url : null,
+      transcript: note.transcription,
       summary: note.summary,
-      dateOfRecording: formatDateOnly(note.dateOfRecording),
-      createdAt: formatDate(note.createdAt),
-      updatedAt: formatDate(note.updatedAt),
+      recordingDate: formatDateOnly(note.dateOfRecording),
     };
   }
 }
