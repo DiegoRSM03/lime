@@ -1,3 +1,5 @@
+'use server';
+
 import { NoteResponseDto } from '@repo/api';
 
 const getNotes = async () => {

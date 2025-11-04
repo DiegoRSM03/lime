@@ -5,7 +5,7 @@ export interface NoteResponseDto {
   patient: PatientResponseDto;
   s3Url: string | null;
   rawNotes: string | null;
-  transcription: string | null;
+  transcript: string | null;
   summary: {
     subjective: string;
     objective: string;
