@@ -47,8 +47,27 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           script: |
+            # Exit if any command fails
+            set -e
+
+            # Remove old node_modules and pnpm cache
+            rm -rf node_modules
+            pnpm store prune || true
+            rm -rf ~/.pnpm-store || true
+
+            # Clean up old Docker containers, images, volumes, and networks
+            docker system prune -af --volumes
+            docker builder prune -af
+
+            # Pull the latest code
             cd /home/ec2-user/lime
             git pull origin main
+
+            # Build and deploy the application
             docker-compose down
             docker-compose up -d --build
+
+            echo "Cleaning up unused Docker artifacts post-build..."
             docker image prune -f
+            docker volume prune -f
+            docker container prune -f
