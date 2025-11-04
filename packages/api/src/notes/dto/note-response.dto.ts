@@ -5,6 +5,12 @@ export interface NoteResponseDto {
   s3Url: string | null;
   rawNotes: string | null;
   transcription: string | null;
+  summary: {
+    subjective: string;
+    objective: string;
+    assessment: string;
+    plan: string;
+  } | null;
   dateOfRecording: string; // ISO string for API responses
   createdAt: string; // ISO string for API responses
   updatedAt: string; // ISO string for API responses

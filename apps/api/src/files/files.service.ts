@@ -13,6 +13,7 @@ import { UploadTextDto } from './dto/upload-text.dto';
 import { NoteResponseDto } from './dto/note-response.dto';
 import { PatientsService } from '../patients/patients.service';
 import { TranscriptionService } from '../transcription/transcription.service';
+import { SummaryService } from '../summary/summary.service';
 
 @Injectable()
 export class FilesService {
@@ -25,6 +26,7 @@ export class FilesService {
     private configService: ConfigService,
     private patientsService: PatientsService,
     private transcriptionService: TranscriptionService,
+    private summaryService: SummaryService,
   ) {
     this.s3Client = new S3Client({
       region: this.configService.get('AWS_REGION', process.env.AWS_REGION),
@@ -89,12 +91,25 @@ export class FilesService {
         // Continue without transcription rather than failing the whole upload
       }
 
+      // Generate summary if we have transcription
+      let summary = null;
+      if (transcription) {
+        try {
+          summary =
+            await this.summaryService.generateSOAPSummary(transcription);
+        } catch (error) {
+          console.error('Summary generation failed:', error);
+          // Continue without summary rather than failing the whole upload
+        }
+      }
+
       const note = this.noteRepository.create({
         patientUuid: uploadAudioDto.patientUuid,
         type: NoteType.AUDIO,
         s3Url,
         rawNotes: null,
         transcription,
+        summary,
         dateOfRecording: new Date(uploadAudioDto.dateOfFile),
       });
 
@@ -121,11 +136,25 @@ export class FilesService {
       throw error;
     }
 
+    // Generate summary for text notes
+    let summary = null;
+    if (uploadTextDto.notes) {
+      try {
+        summary = await this.summaryService.generateSOAPSummary(
+          uploadTextDto.notes,
+        );
+      } catch (error) {
+        console.error('Summary generation failed:', error);
+        // Continue without summary rather than failing the whole upload
+      }
+    }
+
     const note = this.noteRepository.create({
       patientUuid: uploadTextDto.patientUuid,
       type: NoteType.TEXT,
       s3Url: null,
       rawNotes: uploadTextDto.notes,
+      summary,
       dateOfRecording: new Date(uploadTextDto.dateOfFile),
     });
 
@@ -158,6 +187,7 @@ export class FilesService {
       s3Url: note.s3Url,
       rawNotes: note.rawNotes,
       transcription: note.transcription,
+      summary: note.summary,
       dateOfRecording: formatDateOnly(note.dateOfRecording),
       createdAt: formatDate(note.createdAt),
       updatedAt: formatDate(note.updatedAt),
