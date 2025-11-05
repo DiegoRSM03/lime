@@ -4,16 +4,16 @@ import SidebarLink, { SidebarLinkProps } from './link';
 
 const SIDEBAR_LINKS: SidebarLinkProps[] = [
   {
-    href: '/',
-    label: 'Home',
+    href: '/notes',
+    label: 'Notes',
   },
   {
     href: '/upload',
     label: 'Upload',
   },
   {
-    href: '/notes',
-    label: 'Notes',
+    href: '/information',
+    label: 'Information',
   },
 ];
 
@@ -40,7 +40,7 @@ const Sidebar = () => {
             />
             <span className="text-2xl font-bold">Lime</span>
           </div>
-          <ul className="mt-10 space-y-2">
+          <ul className="mt-10 space-y-4">
             {SIDEBAR_LINKS.map((link) => (
               <li key={link.href}>
                 <SidebarLink key={link.href} {...link} />

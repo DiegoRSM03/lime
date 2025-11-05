@@ -3,7 +3,8 @@
 import { NoteResponseDto } from '@repo/api';
 
 const getNotes = async () => {
-  const response = await fetch(`${process.env.API_URL}/notes`);
+  const endpoint = `${process.env.API_URL}/notes`;
+  const response = await fetch(endpoint);
 
   if (!response.ok) throw new Error('Failed to fetch notes');
 
@@ -12,7 +13,8 @@ const getNotes = async () => {
 };
 
 const getNoteByUuid = async (uuid: string) => {
-  const response = await fetch(`${process.env.API_URL}/notes/${uuid}`);
+  const endpoint = `${process.env.API_URL}/notes/${uuid}`;
+  const response = await fetch(endpoint);
 
   if (!response.ok) throw new Error('Failed to fetch note');
 
