@@ -8,6 +8,11 @@ dotenv.config({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '30mb',
+    },
+  },
   allowedDevOrigins: ['http://localhost:3000'],
   redirects: async () => {
     return [

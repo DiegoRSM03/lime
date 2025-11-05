@@ -1,7 +1,9 @@
 import { PatientResponseDto } from '@repo/api';
 
 const getPatients = async () => {
-  const response = await fetch(`${process.env.API_URL}/patients`);
+  const endpoint = `${process.env.API_URL}/patients`;
+  const response = await fetch(endpoint);
+
   if (!response.ok) throw new Error('Failed to fetch patients');
 
   const data = await response.json();
