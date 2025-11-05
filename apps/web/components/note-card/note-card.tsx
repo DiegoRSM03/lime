@@ -24,8 +24,8 @@ const NoteCard = ({ note }: NoteCardProps) => {
   );
 
   return (
-    <Link href={`/notes/${note.uuid}`} className="w-full h-max">
-      <div className="w-full bg-linear-to-r from-blue-950/20 to-blue-950/50 rounded-lg p-4 border border-blue-950">
+    <Link href={`/notes/${note.uuid}`} className="w-full h-full">
+      <div className="w-full bg-linear-to-r from-blue-950/20 to-blue-950/50 rounded-lg p-4 border border-blue-950 h-full">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             <p className="text-sm text-gray-300 font-medium">{`${patient.firstName} ${patient.lastName}`}</p>
@@ -40,12 +40,14 @@ const NoteCard = ({ note }: NoteCardProps) => {
         {noteType === 'audio' ? (
           <div className="flex flex-col justify-center items-start gap-2">
             <span className="text-sm text-gray-400">Uploaded Audio</span>
-            <AudioPlayer url={note.recordingURL as string} className="w-1/3" />
+            <AudioPlayer url={note.recordingURL as string} />
           </div>
         ) : (
           <div className="flex flex-col justify-center items-start gap-2">
             <span className="text-sm text-gray-400">Raw Notes</span>
-            <p className="text-sm text-gray-300">{note.rawNotes}</p>
+            <p className="text-sm text-gray-300 line-clamp-4">
+              {note.rawNotes}
+            </p>
           </div>
         )}
       </div>
