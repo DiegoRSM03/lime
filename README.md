@@ -1,124 +1,50 @@
-# Turborepo starter
+# 🩺 Lime Technical Assessment — AI Scribe Notes Management Tool
 
-This is a community-maintained example. If you experience a problem, please submit a pull request with a fix. GitHub Issues will be closed.
+---
 
-## Using this example
+## 🧭 Summary
 
-Run the following command:
+This project is a **lightweight AI Scribe Notes Management Tool** built to manage clinical notes associated with patients.  
+It allows users to create, upload, and view AI-generated or transcribed notes, simulating a real-world healthcare documentation workflow.
 
-```bash
-npx create-turbo@latest -e with-nestjs
-```
+The architecture is designed for scalability and developer experience — powered by a **Turborepo monorepo**, with a **NestJS backend**, **Next.js (App Router)** frontend, and automated **CI/CD pipelines** deploying seamlessly across **AWS EC2** and **Vercel**.
 
-## What's inside?
+---
 
-This Turborepo includes the following packages & apps:
+## ⚙️ Key Features of This Application
 
-### Apps and Packages
+- 🧱 **Monorepo with Turborepo**
+  - Centralized management of frontend, backend, and shared packages.
+  - Caching and task pipelines for faster builds (`turbo run build`, `turbo run dev`).
+  - Shared ESLint, TypeScript, and UI configurations for consistency.
 
-```shell
-.
-├── apps
-│   ├── api                       # NestJS app (https://nestjs.com).
-│   └── web                       # Next.js app (https://nextjs.org).
-└── packages
-    ├── @repo/api                 # Shared `NestJS` resources.
-    ├── @repo/eslint-config       # `eslint` configurations (includes `prettier`)
-    ├── @repo/jest-config         # `jest` configurations
-    ├── @repo/typescript-config   # `tsconfig.json`s used throughout the monorepo
-    └── @repo/ui                  # Shareable stub React component library.
-```
+- 🦋 **NestJS Backend (API)**
+  - Structured, modular, and strongly typed backend using **TypeScript**.
+  - **PostgreSQL** database integration with **TypeORM**.
+  - **S3 file uploads** for handling audio recordings.
+  - **Seed script** to prepopulate mock patients on first run.
+  - **AI integrations** for transcription and summarization (OpenAI / Whisper compatible).
 
-Each package and application are mostly written in [TypeScript](https://www.typescriptlang.org/).
+- ⚡ **Next.js Frontend (App Router)**
+  - Modern React 19 setup with **Next.js 15 (App Router)**.
+  - **Tailwind CSS 4** for utility-first responsive design.
+  - Seamless integration with backend APIs and S3 uploads.
+  - Deployed on **Vercel**, with automatic preview links for each PR.
 
-### Utilities
+- 🧩 **Husky + Git Hooks**
+  - Pre-commit hooks ensure linting and formatting checks before code submission.
+  - Reduces CI build failures by enforcing standards early.
 
-This `Turborepo` has some additional tools already set for you:
+- 🚀 **GitHub Actions CI/CD**
+  - Automated pipelines for linting, formatting, building, and deploying.
+  - Dockerized backend deployment to **AWS EC2**.
+  - Frontend preview and production deployments via **Vercel**.
 
-- [TypeScript](https://www.typescriptlang.org/) for static type-safety
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-- [Jest](https://prettier.io) & [Playwright](https://playwright.dev/) for testing
+- ☁️ **AWS Infrastructure**
+  - **EC2** instance running the **Dockerized NestJS + PostgreSQL** stack.
+  - **S3** bucket for secure and scalable audio file storage.
+  - HTTPS communication between frontend (Vercel) and backend (EC2).
 
-### Commands
-
-This `Turborepo` already configured useful commands for all your apps and packages.
-
-#### Build
-
-```bash
-# Will build all the app & packages with the supported `build` script.
-pnpm run build
-
-# ℹ️ If you plan to only build apps individually,
-# Please make sure you've built the packages first.
-```
-
-#### Develop
-
-```bash
-# Will run the development server for all the app & packages with the supported `dev` script.
-pnpm run dev
-```
-
-#### test
-
-```bash
-# Will launch a test suites for all the app & packages with the supported `test` script.
-pnpm run test
-
-# You can launch e2e testes with `test:e2e`
-pnpm run test:e2e
-
-# See `@repo/jest-config` to customize the behavior.
-```
-
-#### Lint
-
-```bash
-# Will lint all the app & packages with the supported `lint` script.
-# See `@repo/eslint-config` to customize the behavior.
-pnpm run lint
-```
-
-#### Format
-
-```bash
-# Will format all the supported `.ts,.js,json,.tsx,.jsx` files.
-# See `@repo/eslint-config/prettier-base.js` to customize the behavior.
-pnpm format
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```bash
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```bash
-npx turbo link
-```
-
-## Useful Links
-
-This example take some inspiration the [with-nextjs](https://github.com/vercel/turborepo/tree/main/examples/with-nextjs) `Turbo` example and [01-cats-app](https://github.com/nestjs/nest/tree/master/sample/01-cats-app) `NestJs` sample.
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+- 🌱 **Seed Script**
+  - Seeds the database with initial mock patients and records.
+  - Automatically runs during development or production start.
