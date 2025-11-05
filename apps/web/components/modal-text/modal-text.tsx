@@ -2,23 +2,28 @@
 import { useState } from 'react';
 // Components
 import Modal from '@/components/modal/modal';
+// Types
+import { NoteResponseDto } from '@repo/api';
 
 interface ModalTextProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpload: (text: string) => void;
+  onUpload: (text: string) => Promise<NoteResponseDto>;
 }
 
 const ModalText = ({ isOpen, onClose, onUpload }: ModalTextProps) => {
   const [text, setText] = useState<string>('');
+  const [uploading, setUploading] = useState(false);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(event.target.value);
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (text) {
-      onUpload(text);
+      setUploading(true);
+      await onUpload(text);
+      setUploading(false);
       onClose();
     }
   };
@@ -40,7 +45,7 @@ const ModalText = ({ isOpen, onClose, onUpload }: ModalTextProps) => {
         className="bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed w-full"
         onClick={handleUpload}
       >
-        Upload text to patient
+        {uploading ? 'Uploading...' : 'Upload text to patient'}
       </button>
     </Modal>
   );
