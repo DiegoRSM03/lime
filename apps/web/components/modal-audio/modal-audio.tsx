@@ -1,15 +1,18 @@
 import { useState } from 'react';
 // Components
 import Modal from '@/components/modal/modal';
+// Types
+import { NoteResponseDto } from '@repo/api';
 
 interface ModalAudioProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpload: (file: File) => void;
+  onUpload: (file: File) => Promise<NoteResponseDto>;
 }
 
 const ModalAudio = ({ isOpen, onClose, onUpload }: ModalAudioProps) => {
   const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
@@ -17,9 +20,11 @@ const ModalAudio = ({ isOpen, onClose, onUpload }: ModalAudioProps) => {
     if (file) setFile(file);
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (file) {
-      onUpload(file);
+      setUploading(true);
+      await onUpload(file);
+      setUploading(false);
       onClose();
     }
   };
@@ -40,11 +45,11 @@ const ModalAudio = ({ isOpen, onClose, onUpload }: ModalAudioProps) => {
           onChange={handleFileChange}
         />
         <button
-          disabled={!file}
+          disabled={!file || uploading}
           className="bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={handleUpload}
         >
-          Upload recording to patient
+          {uploading ? 'Uploading...' : 'Upload recording to patient'}
         </button>
       </div>
     </Modal>
