@@ -9,7 +9,7 @@ dotenv.config({
   path: path.resolve(
     process.cwd(),
     '../../',
-    process.env.NODE_ENV === 'development' ? '.env.local' : '.env',
+    process.env.NODE_ENV === 'production' ? '.env' : '.env.local',
   ),
 });
 
