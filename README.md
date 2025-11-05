@@ -1,7 +1,5 @@
 # 🩺 Lime Technical Assessment — AI Scribe Notes Management Tool
 
----
-
 ## 🧭 Summary
 
 This project is a **lightweight AI Scribe Notes Management Tool** built to manage clinical notes associated with patients.  
@@ -9,7 +7,11 @@ It allows users to create, upload, and view AI-generated or transcribed notes, s
 
 The architecture is designed for scalability and developer experience — powered by a **Turborepo monorepo**, with a **NestJS backend**, **Next.js (App Router)** frontend, and automated **CI/CD pipelines** deploying seamlessly across **AWS EC2** and **Vercel**.
 
----
+## Deployed Applications
+
+### Frontend: https://lime-web-blond.vercel.app/
+
+### Backend: http://18.220.163.52:3000/api
 
 ## ⚙️ Key Features of This Application
 
