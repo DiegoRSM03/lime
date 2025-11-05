@@ -13,15 +13,29 @@ The architecture is designed for scalability and developer experience — powere
 
 ### Backend: http://18.220.163.52:3000/api
 
+### Test mp3 file: You can find it at the root of this project
+
 ## Walkthrough
 
+<div>
+  <a href="https://www.loom.com/share/2cbcc172a9b94678ba4ddb294174171c">
+    <p>Software Engineering Project Overview - Watch Video</p>
+  </a>
+  <a href="https://www.loom.com/share/2cbcc172a9b94678ba4ddb294174171c">
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/2cbcc172a9b94678ba4ddb294174171c-55f11d19a771ce37-full-play.gif">
+  </a>
+</div>
+
 ### Application Overview
+
 https://github.com/user-attachments/assets/17691788-9eb3-4ea5-9080-d357fdaa4e40
 
 ### Notes index and Note page
+
 https://github.com/user-attachments/assets/b461110d-4751-4f1c-9f26-67b6d9f064c2
 
 ### Upload notes (audio or text)
+
 https://github.com/user-attachments/assets/95e00ff7-8233-4a09-a648-067ae8896f7f
 
 ## ⚙️ Key Features of This Application
