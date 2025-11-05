@@ -13,6 +13,17 @@ The architecture is designed for scalability and developer experience — powere
 
 ### Backend: http://18.220.163.52:3000/api
 
+## Walkthrough
+
+### Application Overview
+https://github.com/user-attachments/assets/17691788-9eb3-4ea5-9080-d357fdaa4e40
+
+### Notes index and Note page
+https://github.com/user-attachments/assets/b461110d-4751-4f1c-9f26-67b6d9f064c2
+
+### Upload notes (audio or text)
+https://github.com/user-attachments/assets/95e00ff7-8233-4a09-a648-067ae8896f7f
+
 ## ⚙️ Key Features of This Application
 
 - 🧱 **Monorepo with Turborepo**
