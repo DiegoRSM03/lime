@@ -29,15 +29,18 @@ export class FilesService {
     private summaryService: SummaryService,
   ) {
     this.s3Client = new S3Client({
-      region: this.configService.get('AWS_REGION', process.env.AWS_REGION),
+      region: this.configService.get(
+        'AWS_S3_REGION',
+        process.env.AWS_S3_REGION,
+      ),
       credentials: {
         accessKeyId: this.configService.get(
           'AWS_ACCESS_KEY_ID',
-          process.env.AWS_ACCESS_KEY,
+          process.env.AWS_S3_ACCESS_KEY,
         ),
         secretAccessKey: this.configService.get(
-          'AWS_SECRET_ACCESS_KEY',
-          process.env.AWS_SECRET_ACCESS_KEY,
+          'AWS_S3_SECRET_ACCESS_KEY',
+          process.env.AWS_S3_SECRET_ACCESS_KEY,
         ),
       },
     });
@@ -78,7 +81,7 @@ export class FilesService {
 
       await this.s3Client.send(new PutObjectCommand(uploadParams));
 
-      const s3Url = `https://${this.bucketName}.s3.${this.configService.get('AWS_REGION', process.env.AWS_REGION)}.amazonaws.com/${s3Key}`;
+      const s3Url = `https://${this.bucketName}.s3.${this.configService.get('AWS_S3_REGION', process.env.AWS_S3_REGION)}.amazonaws.com/${s3Key}`;
 
       let transcription: string | null = null;
       try {
