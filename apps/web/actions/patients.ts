@@ -1,3 +1,5 @@
+'use server';
+
 import { PatientResponseDto } from '@repo/api';
 
 const getPatients = async () => {
